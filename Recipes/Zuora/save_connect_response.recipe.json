@@ -1,0 +1,2660 @@
+{
+  "name": "Save Connect response",
+  "description": "When there is a new call for callable recipe, do action",
+  "version": 25,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_service",
+    "name": "receive_request",
+    "as": "2d4f249f",
+    "title": null,
+    "description": "New <span class=\"provider\">call</span> for <span class=\"provider\">Save Connect response</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "service_name": "Save Connect response",
+      "request_schema_json": "[{\"control_type\":\"text\",\"label\":\"Order number\",\"name\":\"orderNumber\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Status\",\"name\":\"status\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Inquery Link\",\"name\":\"inquery_link\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Message\",\"name\":\"message\",\"type\":\"string\",\"optional\":true},{\"name\":\"subscription_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\"},{\"name\":\"customer_external_uid\",\"type\":\"string\",\"optional\":true,\"control_type\":\"text\"},{\"name\":\"subscription_external_uid\",\"type\":\"string\",\"optional\":true,\"control_type\":\"text\"},{\"name\":\"tier1_external_uid\",\"type\":\"string\",\"optional\":true,\"control_type\":\"text\"},{\"name\":\"customer_id\",\"type\":\"string\",\"optional\":true,\"control_type\":\"text\"},{\"name\":\"tier_id\",\"type\":\"string\",\"optional\":true,\"control_type\":\"text\"}]"
+    },
+    "extended_output_schema": [
+      {
+        "type": "object",
+        "name": "request",
+        "label": "Recipe input",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Order number",
+            "name": "orderNumber",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Status",
+            "name": "status",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Inquery Link",
+            "name": "inquery_link",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Message",
+            "name": "message",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Subscription ID",
+            "name": "subscription_id",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Customer external uid",
+            "name": "customer_external_uid",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Subscription external uid",
+            "name": "subscription_external_uid",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Tier 1 external uid",
+            "name": "tier1_external_uid",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Customer ID",
+            "name": "customer_id",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Tier ID",
+            "name": "tier_id",
+            "type": "string",
+            "optional": true
+          }
+        ]
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "keyword": "if",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "type": "compound",
+          "operand": "and",
+          "conditions": [
+            {
+              "operand": "present",
+              "lhs": "#{_('data.workato_service.2d4f249f.request.inquery_link')}",
+              "rhs": null,
+              "uuid": "condition-6a513dbb-4c06-47e6-8d66-e7f43b23ad75"
+            }
+          ]
+        },
+        "block": [
+          {
+            "number": 2,
+            "provider": "zuora",
+            "name": "__adhoc_http_action",
+            "as": "360ae56a",
+            "title": "Update Subscription Custom Fields\n",
+            "description": "Update <span class=\"provider\">Subscription Custom Fields\n</span> in <span class=\"provider\">Zuora</span> (Custom)",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "mnemonic": "Update Subscription Custom Fields\n",
+              "verb": "put",
+              "request_type": "json",
+              "response_type": "json",
+              "path": "/v1/subscriptions/#{_('data.workato_service.2d4f249f.request.subscription_id')}/customFields",
+              "input": {
+                "schema": "[{\"properties\":[{\"control_type\":\"text\",\"label\":\"Inquiry link\",\"name\":\"InquiryLink__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect Status\",\"name\":\"ConnectStatus__c\",\"type\":\"string\",\"optional\":true},{\"name\":\"ConnectLastOrder__c\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\"},{\"control_type\":\"text\",\"label\":\"Connect error message\",\"name\":\"ConnectErrorMessage__c\",\"type\":\"string\",\"optional\":true}],\"label\":\"Custom fields\",\"name\":\"customFields\",\"type\":\"object\",\"optional\":false}]",
+                "data": {
+                  "customFields": {
+                    "InquiryLink__c": "#{_('data.workato_service.2d4f249f.request.inquery_link')}",
+                    "ConnectStatus__c": "#{_('data.workato_service.2d4f249f.request.status')}",
+                    "ConnectLastOrder__c": "#{_('data.workato_service.2d4f249f.request.orderNumber')}"
+                  }
+                }
+              }
+            },
+            "extended_input_schema": [
+              {
+                "type": "string",
+                "name": "path",
+                "control_type": "text",
+                "label": "Path",
+                "hint": "Base URI is <b>https://rest.apisandbox.zuora.com</b> - path will be appended to this URI. Use absolute URI to override this base URI.",
+                "optional": false
+              },
+              {
+                "type": "string",
+                "name": "request_type",
+                "control_type": "select",
+                "label": "Request type",
+                "default": "json",
+                "sticky": false,
+                "pick_list": [
+                  [
+                    "JSON request body",
+                    "json"
+                  ],
+                  [
+                    "URL encoded form",
+                    "urlencoded"
+                  ],
+                  [
+                    "Multipart form",
+                    "multipart"
+                  ],
+                  [
+                    "Raw request body",
+                    "raw"
+                  ]
+                ],
+                "optional": true,
+                "extends_schema": true
+              },
+              {
+                "type": "string",
+                "name": "response_type",
+                "control_type": "select",
+                "label": "Response type",
+                "default": "json",
+                "sticky": false,
+                "pick_list": [
+                  [
+                    "JSON response",
+                    "json"
+                  ],
+                  [
+                    "Raw response",
+                    "raw"
+                  ]
+                ],
+                "optional": true,
+                "extends_schema": true
+              },
+              {
+                "type": "object",
+                "name": "input",
+                "label": "Input",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "schema-designer",
+                    "label": "Request body parameters",
+                    "extends_schema": true,
+                    "schema_neutral": true,
+                    "sample_data_type": "json_input",
+                    "sticky": false,
+                    "add_field_label": "Add request body parameter",
+                    "optional": true,
+                    "type": "string",
+                    "name": "schema"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Inquiry link",
+                            "optional": true,
+                            "type": "string",
+                            "name": "InquiryLink__c"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect Status",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ConnectStatus__c"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect last order c",
+                            "optional": false,
+                            "type": "string",
+                            "name": "ConnectLastOrder__c"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect error message",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ConnectErrorMessage__c"
+                          }
+                        ],
+                        "label": "Custom fields",
+                        "optional": false,
+                        "sticky": true,
+                        "type": "object",
+                        "name": "customFields"
+                      }
+                    ],
+                    "label": "Data",
+                    "optional": true,
+                    "type": "object",
+                    "name": "data"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "name": "request_headers",
+                "control_type": "key_value",
+                "label": "Request headers",
+                "optional": true,
+                "of": "object",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Value",
+                    "optional": true,
+                    "type": "string",
+                    "name": "value"
+                  }
+                ]
+              },
+              {
+                "type": "string",
+                "name": "output",
+                "control_type": "schema-designer",
+                "label": "Response body",
+                "sticky": true,
+                "optional": true,
+                "extends_schema": true,
+                "schema_neutral": true
+              },
+              {
+                "type": "string",
+                "name": "response_headers",
+                "control_type": "schema-designer",
+                "label": "Response headers",
+                "sticky": false,
+                "optional": true,
+                "extends_schema": true,
+                "schema_neutral": true
+              }
+            ],
+            "visible_config_fields": [
+              "mnemonic",
+              "verb",
+              "path",
+              "request_type",
+              "response_type",
+              "input",
+              "input.schema",
+              "input.data",
+              "input.data.customFields",
+              "input.data.customFields.orderstatus__c",
+              "output",
+              "input.data.customFields.inquiry_link__c",
+              "input.data.customFields.ConnectStatus__c",
+              "input.data.customFields.InquiryLink__c"
+            ],
+            "comment": "Inquery (link and status)",
+            "uuid": "83fba4f4-e764-4d24-93e1-6830529ac85e"
+          },
+          {
+            "number": 3,
+            "keyword": "else",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+            },
+            "block": [
+              {
+                "number": 4,
+                "keyword": "if",
+                "dynamicPickListSelection": {
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "type": "compound",
+                  "operand": "and",
+                  "conditions": [
+                    {
+                      "operand": "is_true",
+                      "lhs": "=_('data.workato_service.2d4f249f.request.orderNumber').blank?",
+                      "rhs": "",
+                      "uuid": "condition-93d85382-4364-4eba-a8c9-afe8203525be"
+                    }
+                  ]
+                },
+                "block": [
+                  {
+                    "number": 5,
+                    "provider": "zuora",
+                    "name": "__adhoc_http_action",
+                    "as": "8d999eb9",
+                    "title": "Update Subscription Custom Fields\n",
+                    "description": "Update <span class=\"provider\">Subscription Custom Fields\n</span> in <span class=\"provider\">Zuora</span> (Custom)",
+                    "keyword": "action",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                      "mnemonic": "Update Subscription Custom Fields\n",
+                      "verb": "put",
+                      "request_type": "json",
+                      "response_type": "json",
+                      "path": "/v1/subscriptions/#{_('data.workato_service.2d4f249f.request.subscription_id')}/customFields",
+                      "input": {
+                        "schema": "[{\"properties\":[{\"control_type\":\"text\",\"label\":\"Inquiry link\",\"name\":\"InquiryLink__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect Status\",\"name\":\"ConnectStatus__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect last order c\",\"name\":\"ConnectLastOrder__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect error message\",\"name\":\"ConnectErrorMessage__c\",\"type\":\"string\",\"optional\":true}],\"label\":\"Custom fields\",\"name\":\"customFields\",\"type\":\"object\",\"optional\":false}]",
+                        "data": {
+                          "customFields": {
+                            "ConnectStatus__c": "#{_('data.workato_service.2d4f249f.request.status')}",
+                            "ConnectErrorMessage__c": "#{_('data.workato_service.2d4f249f.request.message')}"
+                          }
+                        }
+                      }
+                    },
+                    "extended_input_schema": [
+                      {
+                        "type": "string",
+                        "name": "path",
+                        "control_type": "text",
+                        "label": "Path",
+                        "hint": "Base URI is <b>https://rest.apisandbox.zuora.com</b> - path will be appended to this URI. Use absolute URI to override this base URI.",
+                        "optional": false
+                      },
+                      {
+                        "type": "string",
+                        "name": "request_type",
+                        "control_type": "select",
+                        "label": "Request type",
+                        "default": "json",
+                        "sticky": false,
+                        "pick_list": [
+                          [
+                            "JSON request body",
+                            "json"
+                          ],
+                          [
+                            "URL encoded form",
+                            "urlencoded"
+                          ],
+                          [
+                            "Multipart form",
+                            "multipart"
+                          ],
+                          [
+                            "Raw request body",
+                            "raw"
+                          ]
+                        ],
+                        "optional": true,
+                        "extends_schema": true
+                      },
+                      {
+                        "type": "string",
+                        "name": "response_type",
+                        "control_type": "select",
+                        "label": "Response type",
+                        "default": "json",
+                        "sticky": false,
+                        "pick_list": [
+                          [
+                            "JSON response",
+                            "json"
+                          ],
+                          [
+                            "Raw response",
+                            "raw"
+                          ]
+                        ],
+                        "optional": true,
+                        "extends_schema": true
+                      },
+                      {
+                        "type": "object",
+                        "name": "input",
+                        "label": "Input",
+                        "optional": true,
+                        "properties": [
+                          {
+                            "control_type": "schema-designer",
+                            "label": "Request body parameters",
+                            "extends_schema": true,
+                            "schema_neutral": true,
+                            "sample_data_type": "json_input",
+                            "sticky": false,
+                            "add_field_label": "Add request body parameter",
+                            "optional": true,
+                            "type": "string",
+                            "name": "schema"
+                          },
+                          {
+                            "properties": [
+                              {
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Inquiry link",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "InquiryLink__c"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Connect Status",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "ConnectStatus__c"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Connect last order c",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "ConnectLastOrder__c"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Connect error message",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "ConnectErrorMessage__c"
+                                  }
+                                ],
+                                "label": "Custom fields",
+                                "optional": false,
+                                "sticky": true,
+                                "type": "object",
+                                "name": "customFields"
+                              }
+                            ],
+                            "label": "Data",
+                            "optional": true,
+                            "type": "object",
+                            "name": "data"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "name": "request_headers",
+                        "control_type": "key_value",
+                        "label": "Request headers",
+                        "optional": true,
+                        "of": "object",
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Name",
+                            "optional": true,
+                            "type": "string",
+                            "name": "name"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Value",
+                            "optional": true,
+                            "type": "string",
+                            "name": "value"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "name": "output",
+                        "control_type": "schema-designer",
+                        "label": "Response body",
+                        "sticky": true,
+                        "optional": true,
+                        "extends_schema": true,
+                        "schema_neutral": true
+                      },
+                      {
+                        "type": "string",
+                        "name": "response_headers",
+                        "control_type": "schema-designer",
+                        "label": "Response headers",
+                        "sticky": false,
+                        "optional": true,
+                        "extends_schema": true,
+                        "schema_neutral": true
+                      }
+                    ],
+                    "visible_config_fields": [
+                      "mnemonic",
+                      "verb",
+                      "path",
+                      "request_type",
+                      "response_type",
+                      "input",
+                      "input.schema",
+                      "input.data",
+                      "input.data.customFields",
+                      "input.data.customFields.orderstatus__c",
+                      "output",
+                      "input.data.customFields.inquiry_link__c",
+                      "input.data.customFields.ConnectStatus__c",
+                      "input.data.customFields.ConnectErrorMessage__c"
+                    ],
+                    "comment": "",
+                    "uuid": "c831ce9d-18bd-436a-a028-33d188391b6e"
+                  },
+                  {
+                    "number": 6,
+                    "keyword": "else",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                    },
+                    "block": [
+                      {
+                        "number": 7,
+                        "provider": "zuora",
+                        "name": "__adhoc_http_action",
+                        "as": "3887d11d",
+                        "title": "Update Subscription Custom Fields\n",
+                        "description": "Update <span class=\"provider\">Subscription Custom Fields\n</span> in <span class=\"provider\">Zuora</span> (Custom)",
+                        "keyword": "action",
+                        "dynamicPickListSelection": {
+                        },
+                        "toggleCfg": {
+                        },
+                        "input": {
+                          "mnemonic": "Update Subscription Custom Fields\n",
+                          "verb": "put",
+                          "request_type": "json",
+                          "response_type": "json",
+                          "path": "/v1/subscriptions/#{_('data.workato_service.2d4f249f.request.subscription_id')}/customFields",
+                          "input": {
+                            "schema": "[{\"properties\":[{\"control_type\":\"text\",\"label\":\"Inquiry link\",\"name\":\"InquiryLink__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect Status\",\"name\":\"ConnectStatus__c\",\"type\":\"string\",\"optional\":true},{\"name\":\"ConnectLastOrder__c\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\"},{\"control_type\":\"text\",\"label\":\"Connect error message\",\"name\":\"ConnectErrorMessage__c\",\"type\":\"string\",\"optional\":true}],\"label\":\"Custom fields\",\"name\":\"customFields\",\"type\":\"object\",\"optional\":false}]",
+                            "data": {
+                              "customFields": {
+                                "ConnectStatus__c": "#{_('data.workato_service.2d4f249f.request.status')}",
+                                "ConnectErrorMessage__c": "#{_('data.workato_service.2d4f249f.request.message')}",
+                                "ConnectLastOrder__c": "#{_('data.workato_service.2d4f249f.request.orderNumber')}"
+                              }
+                            }
+                          }
+                        },
+                        "extended_input_schema": [
+                          {
+                            "type": "string",
+                            "name": "path",
+                            "control_type": "text",
+                            "label": "Path",
+                            "hint": "Base URI is <b>https://rest.apisandbox.zuora.com</b> - path will be appended to this URI. Use absolute URI to override this base URI.",
+                            "optional": false
+                          },
+                          {
+                            "type": "string",
+                            "name": "request_type",
+                            "control_type": "select",
+                            "label": "Request type",
+                            "default": "json",
+                            "sticky": false,
+                            "pick_list": [
+                              [
+                                "JSON request body",
+                                "json"
+                              ],
+                              [
+                                "URL encoded form",
+                                "urlencoded"
+                              ],
+                              [
+                                "Multipart form",
+                                "multipart"
+                              ],
+                              [
+                                "Raw request body",
+                                "raw"
+                              ]
+                            ],
+                            "optional": true,
+                            "extends_schema": true
+                          },
+                          {
+                            "type": "string",
+                            "name": "response_type",
+                            "control_type": "select",
+                            "label": "Response type",
+                            "default": "json",
+                            "sticky": false,
+                            "pick_list": [
+                              [
+                                "JSON response",
+                                "json"
+                              ],
+                              [
+                                "Raw response",
+                                "raw"
+                              ]
+                            ],
+                            "optional": true,
+                            "extends_schema": true
+                          },
+                          {
+                            "type": "object",
+                            "name": "input",
+                            "label": "Input",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "schema-designer",
+                                "label": "Request body parameters",
+                                "extends_schema": true,
+                                "schema_neutral": true,
+                                "sample_data_type": "json_input",
+                                "sticky": false,
+                                "add_field_label": "Add request body parameter",
+                                "optional": true,
+                                "type": "string",
+                                "name": "schema"
+                              },
+                              {
+                                "properties": [
+                                  {
+                                    "properties": [
+                                      {
+                                        "control_type": "text",
+                                        "label": "Inquiry link",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "InquiryLink__c"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Connect Status",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "ConnectStatus__c"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Connect last order c",
+                                        "optional": false,
+                                        "type": "string",
+                                        "name": "ConnectLastOrder__c"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Connect error message",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "ConnectErrorMessage__c"
+                                      }
+                                    ],
+                                    "label": "Custom fields",
+                                    "optional": false,
+                                    "sticky": true,
+                                    "type": "object",
+                                    "name": "customFields"
+                                  }
+                                ],
+                                "label": "Data",
+                                "optional": true,
+                                "type": "object",
+                                "name": "data"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "array",
+                            "name": "request_headers",
+                            "control_type": "key_value",
+                            "label": "Request headers",
+                            "optional": true,
+                            "of": "object",
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Name",
+                                "optional": true,
+                                "type": "string",
+                                "name": "name"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Value",
+                                "optional": true,
+                                "type": "string",
+                                "name": "value"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "name": "output",
+                            "control_type": "schema-designer",
+                            "label": "Response body",
+                            "sticky": true,
+                            "optional": true,
+                            "extends_schema": true,
+                            "schema_neutral": true
+                          },
+                          {
+                            "type": "string",
+                            "name": "response_headers",
+                            "control_type": "schema-designer",
+                            "label": "Response headers",
+                            "sticky": false,
+                            "optional": true,
+                            "extends_schema": true,
+                            "schema_neutral": true
+                          }
+                        ],
+                        "visible_config_fields": [
+                          "mnemonic",
+                          "verb",
+                          "path",
+                          "request_type",
+                          "response_type",
+                          "input",
+                          "input.schema",
+                          "input.data",
+                          "input.data.customFields",
+                          "input.data.customFields.orderstatus__c",
+                          "output",
+                          "input.data.customFields.inquiry_link__c",
+                          "input.data.customFields.ConnectStatus__c",
+                          "input.data.customFields.ConnectErrorMessage__c"
+                        ],
+                        "comment": "",
+                        "uuid": "485cf877-ed33-4eba-8214-9c2b4b61ddbb"
+                      }
+                    ],
+                    "uuid": "e503693b-ddb3-49d6-98c3-1f3eb1e9fffc"
+                  }
+                ],
+                "uuid": "b3ccd8e5-4bef-4ee1-823c-b04cd06ede53"
+              }
+            ],
+            "uuid": "4f75201b-3ee5-49d6-ba40-3048c570a5f5"
+          }
+        ],
+        "uuid": "dec10ff1-8c8d-4786-8ed9-5a1f09da2519"
+      },
+      {
+        "number": 8,
+        "keyword": "if",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "type": "compound",
+          "operand": "or",
+          "conditions": [
+            {
+              "operand": "is_not_true",
+              "lhs": "=_('data.workato_service.2d4f249f.request.subscription_external_uid').blank?",
+              "rhs": "",
+              "uuid": "condition-01c06dc9-cec5-43e8-a8cd-75e8ff95a6c2"
+            }
+          ]
+        },
+        "block": [
+          {
+            "number": 9,
+            "provider": "zuora",
+            "name": "__adhoc_http_action",
+            "as": "577917a5",
+            "title": "Update Subscription Custom Fields\n",
+            "description": "Update <span class=\"provider\">Subscription Custom Fields\n</span> in <span class=\"provider\">Zuora</span> (Custom)",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "mnemonic": "Update Subscription Custom Fields\n",
+              "verb": "put",
+              "request_type": "json",
+              "response_type": "json",
+              "path": "/v1/subscriptions/#{_('data.workato_service.2d4f249f.request.subscription_id')}/customFields",
+              "input": {
+                "schema": "[{\"properties\":[{\"control_type\":\"text\",\"label\":\"Inquiry link\",\"name\":\"InquiryLink__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect External UID\",\"name\":\"ConnectExternalUID__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect Status\",\"name\":\"ConnectStatus__c\",\"type\":\"string\",\"optional\":true},{\"control_type\":\"text\",\"label\":\"Connect last order c\",\"name\":\"ConnectLastOrder__c\",\"type\":\"string\",\"optional\":false},{\"control_type\":\"text\",\"label\":\"Connect error message\",\"name\":\"ConnectErrorMessage__c\",\"type\":\"string\",\"optional\":true}],\"label\":\"Custom fields\",\"name\":\"customFields\",\"type\":\"object\",\"optional\":false}]",
+                "data": {
+                  "customFields": {
+                    "ConnectErrorMessage__c": "#{_('data.workato_service.2d4f249f.request.message')}",
+                    "ConnectLastOrder__c": "#{_('data.workato_service.2d4f249f.request.orderNumber')}",
+                    "ConnectExternalUID__c": "#{_('data.workato_service.2d4f249f.request.subscription_external_uid')}"
+                  }
+                }
+              }
+            },
+            "extended_input_schema": [
+              {
+                "type": "string",
+                "name": "path",
+                "control_type": "text",
+                "label": "Path",
+                "hint": "Base URI is <b>https://rest.apisandbox.zuora.com</b> - path will be appended to this URI. Use absolute URI to override this base URI.",
+                "optional": false
+              },
+              {
+                "type": "string",
+                "name": "request_type",
+                "control_type": "select",
+                "label": "Request type",
+                "default": "json",
+                "sticky": false,
+                "pick_list": [
+                  [
+                    "JSON request body",
+                    "json"
+                  ],
+                  [
+                    "URL encoded form",
+                    "urlencoded"
+                  ],
+                  [
+                    "Multipart form",
+                    "multipart"
+                  ],
+                  [
+                    "Raw request body",
+                    "raw"
+                  ]
+                ],
+                "optional": true,
+                "extends_schema": true
+              },
+              {
+                "type": "string",
+                "name": "response_type",
+                "control_type": "select",
+                "label": "Response type",
+                "default": "json",
+                "sticky": false,
+                "pick_list": [
+                  [
+                    "JSON response",
+                    "json"
+                  ],
+                  [
+                    "Raw response",
+                    "raw"
+                  ]
+                ],
+                "optional": true,
+                "extends_schema": true
+              },
+              {
+                "type": "object",
+                "name": "input",
+                "label": "Input",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "schema-designer",
+                    "label": "Request body parameters",
+                    "extends_schema": true,
+                    "schema_neutral": true,
+                    "sample_data_type": "json_input",
+                    "sticky": false,
+                    "add_field_label": "Add request body parameter",
+                    "optional": true,
+                    "type": "string",
+                    "name": "schema",
+                    "parent": "input"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Inquiry link",
+                            "optional": true,
+                            "type": "string",
+                            "name": "InquiryLink__c",
+                            "parent": "input.data.customFields"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect External UID",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ConnectExternalUID__c",
+                            "parent": "input.data.customFields"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect Status",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ConnectStatus__c",
+                            "parent": "input.data.customFields"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect last order c",
+                            "optional": false,
+                            "type": "string",
+                            "name": "ConnectLastOrder__c",
+                            "parent": "input.data.customFields"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Connect error message",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ConnectErrorMessage__c",
+                            "parent": "input.data.customFields"
+                          }
+                        ],
+                        "label": "Custom fields",
+                        "optional": false,
+                        "sticky": true,
+                        "type": "object",
+                        "name": "customFields",
+                        "parent": "input.data"
+                      }
+                    ],
+                    "label": "Data",
+                    "optional": true,
+                    "type": "object",
+                    "name": "data",
+                    "parent": "input"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "name": "request_headers",
+                "control_type": "key_value",
+                "label": "Request headers",
+                "optional": true,
+                "of": "object",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "name",
+                    "parent": "request_headers"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Value",
+                    "optional": true,
+                    "type": "string",
+                    "name": "value",
+                    "parent": "request_headers"
+                  }
+                ]
+              },
+              {
+                "type": "string",
+                "name": "output",
+                "control_type": "schema-designer",
+                "label": "Response body",
+                "sticky": true,
+                "optional": true,
+                "extends_schema": true,
+                "schema_neutral": true
+              },
+              {
+                "type": "string",
+                "name": "response_headers",
+                "control_type": "schema-designer",
+                "label": "Response headers",
+                "sticky": false,
+                "optional": true,
+                "extends_schema": true,
+                "schema_neutral": true
+              }
+            ],
+            "visible_config_fields": [
+              "mnemonic",
+              "verb",
+              "path",
+              "request_type",
+              "response_type",
+              "input",
+              "input.schema",
+              "input.data",
+              "input.data.customFields",
+              "input.data.customFields.orderstatus__c",
+              "output",
+              "input.data.customFields.inquiry_link__c",
+              "input.data.customFields.ConnectErrorMessage__c",
+              "input.data.customFields.ConnectLastOrder__c",
+              "input.data.customFields.ConnectExternalUID__c"
+            ],
+            "comment": "",
+            "uuid": "dc647029-5753-49f1-82c8-9a90b79ec4a6"
+          }
+        ],
+        "uuid": "4380ad09-7e19-435a-90d6-56f9766481eb"
+      },
+      {
+        "number": 10,
+        "keyword": "if",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "type": "compound",
+          "operand": "and",
+          "conditions": [
+            {
+              "operand": "is_not_true",
+              "lhs": "=_('data.workato_service.2d4f249f.request.customer_external_uid').blank?",
+              "rhs": "",
+              "uuid": "condition-b58d2626-a4f7-4066-b8b8-3c33d971665e"
+            }
+          ]
+        },
+        "block": [
+          {
+            "number": 11,
+            "provider": "zuora",
+            "name": "update_record",
+            "as": "74916c64",
+            "title": null,
+            "description": "Update <span class=\"provider\">account</span> in <span class=\"provider\">Zuora</span>",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "object": "Account"
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "object": "Account",
+              "Id": "#{_('data.workato_service.2d4f249f.request.customer_id')}",
+              "ConnectExternalUID__c": "#{_('data.workato_service.2d4f249f.request.customer_external_uid')}"
+            },
+            "extended_input_schema": [
+              {
+                "type": "string",
+                "name": "Id",
+                "control_type": "text",
+                "label": "ID",
+                "hint": "Enter the <b>ID</b> of the account you want to update.",
+                "optional": false
+              },
+              {
+                "type": "string",
+                "name": "AccountNumber",
+                "control_type": "text",
+                "label": "Account Number",
+                "hint": "Unique account number assigned to the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "AdditionalEmailAddresses",
+                "control_type": "text",
+                "label": "Additional Email Addresses",
+                "hint": "List of additional email addresses to receive emailed invoices.",
+                "optional": true
+              },
+              {
+                "type": "number",
+                "name": "AllowInvoiceEdit",
+                "control_type": "number",
+                "label": "Allow Invoice Editing",
+                "hint": "Indicates if associated invoices can be edited.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "number",
+                "name": "AutoPay",
+                "control_type": "number",
+                "label": "Auto Pay",
+                "hint": "Indicates if future payments are automatically collected they're due during a Payment Run.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "Batch",
+                "control_type": "select",
+                "label": "Billing Batch",
+                "hint": "Organizes your customer accounts into groups to optimize your billing and payment operations. Required if you use the Subscribe call.",
+                "pick_list": [
+                  [
+                    "Batch1",
+                    "Batch1"
+                  ],
+                  [
+                    "Batch2",
+                    "Batch2"
+                  ],
+                  [
+                    "Batch3",
+                    "Batch3"
+                  ],
+                  [
+                    "Batch4",
+                    "Batch4"
+                  ],
+                  [
+                    "Batch5",
+                    "Batch5"
+                  ],
+                  [
+                    "Batch6",
+                    "Batch6"
+                  ],
+                  [
+                    "Batch7",
+                    "Batch7"
+                  ],
+                  [
+                    "Batch8",
+                    "Batch8"
+                  ],
+                  [
+                    "Batch9",
+                    "Batch9"
+                  ],
+                  [
+                    "Batch10",
+                    "Batch10"
+                  ],
+                  [
+                    "Batch11",
+                    "Batch11"
+                  ],
+                  [
+                    "Batch12",
+                    "Batch12"
+                  ],
+                  [
+                    "Batch13",
+                    "Batch13"
+                  ],
+                  [
+                    "Batch14",
+                    "Batch14"
+                  ],
+                  [
+                    "Batch15",
+                    "Batch15"
+                  ],
+                  [
+                    "Batch16",
+                    "Batch16"
+                  ],
+                  [
+                    "Batch17",
+                    "Batch17"
+                  ],
+                  [
+                    "Batch18",
+                    "Batch18"
+                  ],
+                  [
+                    "Batch19",
+                    "Batch19"
+                  ],
+                  [
+                    "Batch20",
+                    "Batch20"
+                  ],
+                  [
+                    "Batch21",
+                    "Batch21"
+                  ],
+                  [
+                    "Batch22",
+                    "Batch22"
+                  ],
+                  [
+                    "Batch23",
+                    "Batch23"
+                  ],
+                  [
+                    "Batch24",
+                    "Batch24"
+                  ],
+                  [
+                    "Batch25",
+                    "Batch25"
+                  ],
+                  [
+                    "Batch26",
+                    "Batch26"
+                  ],
+                  [
+                    "Batch27",
+                    "Batch27"
+                  ],
+                  [
+                    "Batch28",
+                    "Batch28"
+                  ],
+                  [
+                    "Batch29",
+                    "Batch29"
+                  ],
+                  [
+                    "Batch30",
+                    "Batch30"
+                  ],
+                  [
+                    "Batch31",
+                    "Batch31"
+                  ],
+                  [
+                    "Batch32",
+                    "Batch32"
+                  ],
+                  [
+                    "Batch33",
+                    "Batch33"
+                  ],
+                  [
+                    "Batch34",
+                    "Batch34"
+                  ],
+                  [
+                    "Batch35",
+                    "Batch35"
+                  ],
+                  [
+                    "Batch36",
+                    "Batch36"
+                  ],
+                  [
+                    "Batch37",
+                    "Batch37"
+                  ],
+                  [
+                    "Batch38",
+                    "Batch38"
+                  ],
+                  [
+                    "Batch39",
+                    "Batch39"
+                  ],
+                  [
+                    "Batch40",
+                    "Batch40"
+                  ],
+                  [
+                    "Batch41",
+                    "Batch41"
+                  ],
+                  [
+                    "Batch42",
+                    "Batch42"
+                  ],
+                  [
+                    "Batch43",
+                    "Batch43"
+                  ],
+                  [
+                    "Batch44",
+                    "Batch44"
+                  ],
+                  [
+                    "Batch45",
+                    "Batch45"
+                  ],
+                  [
+                    "Batch46",
+                    "Batch46"
+                  ],
+                  [
+                    "Batch47",
+                    "Batch47"
+                  ],
+                  [
+                    "Batch48",
+                    "Batch48"
+                  ],
+                  [
+                    "Batch49",
+                    "Batch49"
+                  ],
+                  [
+                    "Batch50",
+                    "Batch50"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Batch",
+                  "label": "Billing Batch",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "BcdSettingOption",
+                "control_type": "select",
+                "label": "Bill Cycle Day Setting Option",
+                "hint": "Billing cycle day setting option. Set Bill Cycle Day to '0' if Autoset.",
+                "pick_list": [
+                  [
+                    "ManualSet",
+                    "ManualSet"
+                  ],
+                  [
+                    "AutoSet",
+                    "AutoSet"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "BcdSettingOption",
+                  "label": "Bill Cycle Day Setting Option",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "number",
+                "name": "BillCycleDay",
+                "control_type": "number",
+                "label": "Bill Cycle Day",
+                "hint": "Billing cycle day (BCD) on which bill runs generate invoices for the account. Set to '0' if Bill cycle day is set to 'AutoSet'.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "BillToId",
+                "control_type": "text",
+                "label": "Bill To ID",
+                "hint": "ID of the person to bill for the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CommunicationProfileId",
+                "control_type": "text",
+                "label": "CommunicationProfile ID",
+                "hint": "Associates the account with a specified communication profile.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "ConnectExternalUID__c",
+                "control_type": "text",
+                "label": "Connect External UID",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CorporateRegion__h",
+                "control_type": "select",
+                "label": "Corporate Region",
+                "pick_list": [
+                  [
+                    "Global",
+                    "Global"
+                  ],
+                  [
+                    "APJ",
+                    "APJ"
+                  ],
+                  [
+                    "Australia",
+                    "Australia"
+                  ],
+                  [
+                    "China",
+                    "China"
+                  ],
+                  [
+                    "Japan",
+                    "Japan"
+                  ],
+                  [
+                    "New Zealand",
+                    "New Zealand"
+                  ],
+                  [
+                    "EMEA",
+                    "EMEA"
+                  ],
+                  [
+                    "France",
+                    "France"
+                  ],
+                  [
+                    "Germany",
+                    "Germany"
+                  ],
+                  [
+                    "Nordics",
+                    "Nordics"
+                  ],
+                  [
+                    "UK",
+                    "UK"
+                  ],
+                  [
+                    "North America",
+                    "North America"
+                  ],
+                  [
+                    "USA",
+                    "USA"
+                  ],
+                  [
+                    "Central",
+                    "Central"
+                  ],
+                  [
+                    "Northeast",
+                    "Northeast"
+                  ],
+                  [
+                    "Northwest",
+                    "Northwest"
+                  ],
+                  [
+                    "Southeast",
+                    "Southeast"
+                  ],
+                  [
+                    "Southwest",
+                    "Southwest"
+                  ],
+                  [
+                    "Canada",
+                    "Canada"
+                  ],
+                  [
+                    "Mexico",
+                    "Mexico"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "CorporateRegion__h",
+                  "label": "Corporate Region",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "CrmId",
+                "control_type": "text",
+                "label": "CRM Account ID",
+                "hint": "CRM account ID for the account. A CRM is a customer relationship management system, such as Salesforce.com.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Currency",
+                "control_type": "text",
+                "label": "Currency",
+                "hint": "Currency that the customer is billed in.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CustomerServiceRepName",
+                "control_type": "text",
+                "label": "CSR",
+                "hint": "Name of the account's customer service representative, if applicable.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "DefaultPaymentMethodId",
+                "control_type": "text",
+                "label": "Default Payment Method ID",
+                "hint": "ID of the default payment method for the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Entity__c",
+                "control_type": "select",
+                "label": "Legal Entity",
+                "pick_list": [
+                  [
+                    "North America",
+                    "North America"
+                  ],
+                  [
+                    "EMEA",
+                    "EMEA"
+                  ],
+                  [
+                    "APAC",
+                    "APAC"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Entity__c",
+                  "label": "Legal Entity",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "InCollections__c",
+                "control_type": "select",
+                "label": "In Collections",
+                "pick_list": [
+                  [
+                    "False",
+                    "False"
+                  ],
+                  [
+                    "True",
+                    "True"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "InCollections__c",
+                  "label": "In Collections",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "number",
+                "name": "InvoiceDeliveryPrefsEmail",
+                "control_type": "number",
+                "label": "Invoice Delivery Preferences Email",
+                "hint": "Indicates if the customer wants to receive invoices through email.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "number",
+                "name": "InvoiceDeliveryPrefsPrint",
+                "control_type": "number",
+                "label": "Invoice Delivery Preferences Print",
+                "hint": "Indicates if the customer wants to receive printed invoices, such as through postal mail.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "InvoiceTemplateId",
+                "control_type": "text",
+                "label": "Invoice Template ID",
+                "hint": "The ID of the invoice template.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Name",
+                "control_type": "text",
+                "label": "Name",
+                "hint": "Name of the account as displayed in the Zuora UI.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Notes",
+                "control_type": "text",
+                "label": "Notes",
+                "hint": "Comments about the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "ParentId",
+                "control_type": "text",
+                "label": "Parent ID",
+                "hint": "Identifier of the parent customer account for this Account object.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PaymentGateway",
+                "control_type": "text",
+                "label": "Payment Gateway Name",
+                "hint": "Gateway used for processing electronic payments and refunds.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PaymentTerm",
+                "control_type": "text",
+                "label": "Payment Term",
+                "hint": "Indicates the customer pays for subscriptions.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PurchaseOrderNumber",
+                "control_type": "text",
+                "label": "PO Number",
+                "hint": "The number of the purchase order associated with this account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SalesRepName",
+                "control_type": "text",
+                "label": "Sales Rep",
+                "hint": "The name of the sales representative associated with this account, if applicable.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SequenceSetId",
+                "control_type": "text",
+                "label": "Sequence Set ID",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SoldToId",
+                "control_type": "text",
+                "label": "Sold To ID",
+                "hint": "ID of the person who bought the subscription associated with the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Status",
+                "control_type": "select",
+                "label": "Status",
+                "hint": "Allowed values are: <b>Draft</b>, <b>Canceled</b> or <b>Active</b>.",
+                "pick_list": [
+                  [
+                    "Draft",
+                    "Draft"
+                  ],
+                  [
+                    "Active",
+                    "Active"
+                  ],
+                  [
+                    "Canceled",
+                    "Canceled"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Status",
+                  "label": "Status",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "TaxCompanyCode",
+                "control_type": "text",
+                "label": "Tax Company Code",
+                "hint": "Unique code that identifies a company account in Avalara.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptCertificateID",
+                "control_type": "text",
+                "label": "Tax Exempt Certificate ID",
+                "hint": "ID of your customer's tax exemption certificate.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptCertificateType",
+                "control_type": "text",
+                "label": "Tax Exempt Certificate Type",
+                "hint": "Type of the tax exemption certificate that your customer holds.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptDescription",
+                "control_type": "text",
+                "label": "Tax Exempt Description",
+                "hint": "Description of the tax exemption certificate that your customer holds.",
+                "optional": true
+              },
+              {
+                "type": "date_time",
+                "name": "TaxExemptEffectiveDate",
+                "control_type": "date",
+                "label": "Tax Exempt Effective Date",
+                "hint": "Date the the customer's tax exemption starts.",
+                "optional": true,
+                "render_input": "date_conversion",
+                "parse_output": "date_conversion"
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptEntityUseCode",
+                "control_type": "text",
+                "label": "Tax Exempt Entity/Use Code",
+                "optional": true
+              },
+              {
+                "type": "date_time",
+                "name": "TaxExemptExpirationDate",
+                "control_type": "date",
+                "label": "Tax Exempt Expiration Date",
+                "hint": "Date the customer's tax exemption certificate expires.",
+                "optional": true,
+                "render_input": "date_conversion",
+                "parse_output": "date_conversion"
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptIssuingJurisdiction",
+                "control_type": "text",
+                "label": "Tax Exempt Issuing Jurisdiction",
+                "hint": "Indicates the jurisdiction in which the customer's tax exemption certificate was issued.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptStatus",
+                "control_type": "select",
+                "label": "Tax Exempt Status",
+                "hint": "Status of the account's tax exemption.",
+                "pick_list": [
+                  [
+                    "No",
+                    "No"
+                  ],
+                  [
+                    "Yes",
+                    "Yes"
+                  ],
+                  [
+                    "PendingVerification",
+                    "PendingVerification"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "TaxExemptStatus",
+                  "label": "Tax Exempt Status",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "VATId",
+                "control_type": "text",
+                "label": "VAT ID",
+                "hint": "EU Value Added Tax ID.",
+                "optional": true
+              }
+            ],
+            "visible_config_fields": [
+              "object",
+              "ConnectExternalUID__c"
+            ],
+            "uuid": "1a68e91d-0376-4d6d-8433-4f0d902b2af0"
+          }
+        ],
+        "uuid": "71056287-9496-4abc-9293-f9fa2241fbdb"
+      },
+      {
+        "number": 12,
+        "keyword": "if",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "type": "compound",
+          "operand": "and",
+          "conditions": [
+            {
+              "operand": "is_not_true",
+              "lhs": "=_('data.workato_service.2d4f249f.request.tier1_external_uid').blank?",
+              "rhs": "",
+              "uuid": "condition-b58d2626-a4f7-4066-b8b8-3c33d971665e"
+            }
+          ]
+        },
+        "block": [
+          {
+            "number": 13,
+            "provider": "zuora",
+            "name": "update_record",
+            "as": "3e23f440",
+            "title": null,
+            "description": "Update <span class=\"provider\">account</span> in <span class=\"provider\">Zuora</span>",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "object": "Account"
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "object": "Account",
+              "Id": "#{_('data.workato_service.2d4f249f.request.tier_id')}",
+              "ConnectExternalUID__c": "#{_('data.workato_service.2d4f249f.request.tier1_external_uid')}"
+            },
+            "extended_input_schema": [
+              {
+                "type": "string",
+                "name": "Id",
+                "control_type": "text",
+                "label": "ID",
+                "hint": "Enter the <b>ID</b> of the account you want to update.",
+                "optional": false
+              },
+              {
+                "type": "string",
+                "name": "AccountNumber",
+                "control_type": "text",
+                "label": "Account Number",
+                "hint": "Unique account number assigned to the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "AdditionalEmailAddresses",
+                "control_type": "text",
+                "label": "Additional Email Addresses",
+                "hint": "List of additional email addresses to receive emailed invoices.",
+                "optional": true
+              },
+              {
+                "type": "number",
+                "name": "AllowInvoiceEdit",
+                "control_type": "number",
+                "label": "Allow Invoice Editing",
+                "hint": "Indicates if associated invoices can be edited.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "number",
+                "name": "AutoPay",
+                "control_type": "number",
+                "label": "Auto Pay",
+                "hint": "Indicates if future payments are automatically collected they're due during a Payment Run.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "Batch",
+                "control_type": "select",
+                "label": "Billing Batch",
+                "hint": "Organizes your customer accounts into groups to optimize your billing and payment operations. Required if you use the Subscribe call.",
+                "pick_list": [
+                  [
+                    "Batch1",
+                    "Batch1"
+                  ],
+                  [
+                    "Batch2",
+                    "Batch2"
+                  ],
+                  [
+                    "Batch3",
+                    "Batch3"
+                  ],
+                  [
+                    "Batch4",
+                    "Batch4"
+                  ],
+                  [
+                    "Batch5",
+                    "Batch5"
+                  ],
+                  [
+                    "Batch6",
+                    "Batch6"
+                  ],
+                  [
+                    "Batch7",
+                    "Batch7"
+                  ],
+                  [
+                    "Batch8",
+                    "Batch8"
+                  ],
+                  [
+                    "Batch9",
+                    "Batch9"
+                  ],
+                  [
+                    "Batch10",
+                    "Batch10"
+                  ],
+                  [
+                    "Batch11",
+                    "Batch11"
+                  ],
+                  [
+                    "Batch12",
+                    "Batch12"
+                  ],
+                  [
+                    "Batch13",
+                    "Batch13"
+                  ],
+                  [
+                    "Batch14",
+                    "Batch14"
+                  ],
+                  [
+                    "Batch15",
+                    "Batch15"
+                  ],
+                  [
+                    "Batch16",
+                    "Batch16"
+                  ],
+                  [
+                    "Batch17",
+                    "Batch17"
+                  ],
+                  [
+                    "Batch18",
+                    "Batch18"
+                  ],
+                  [
+                    "Batch19",
+                    "Batch19"
+                  ],
+                  [
+                    "Batch20",
+                    "Batch20"
+                  ],
+                  [
+                    "Batch21",
+                    "Batch21"
+                  ],
+                  [
+                    "Batch22",
+                    "Batch22"
+                  ],
+                  [
+                    "Batch23",
+                    "Batch23"
+                  ],
+                  [
+                    "Batch24",
+                    "Batch24"
+                  ],
+                  [
+                    "Batch25",
+                    "Batch25"
+                  ],
+                  [
+                    "Batch26",
+                    "Batch26"
+                  ],
+                  [
+                    "Batch27",
+                    "Batch27"
+                  ],
+                  [
+                    "Batch28",
+                    "Batch28"
+                  ],
+                  [
+                    "Batch29",
+                    "Batch29"
+                  ],
+                  [
+                    "Batch30",
+                    "Batch30"
+                  ],
+                  [
+                    "Batch31",
+                    "Batch31"
+                  ],
+                  [
+                    "Batch32",
+                    "Batch32"
+                  ],
+                  [
+                    "Batch33",
+                    "Batch33"
+                  ],
+                  [
+                    "Batch34",
+                    "Batch34"
+                  ],
+                  [
+                    "Batch35",
+                    "Batch35"
+                  ],
+                  [
+                    "Batch36",
+                    "Batch36"
+                  ],
+                  [
+                    "Batch37",
+                    "Batch37"
+                  ],
+                  [
+                    "Batch38",
+                    "Batch38"
+                  ],
+                  [
+                    "Batch39",
+                    "Batch39"
+                  ],
+                  [
+                    "Batch40",
+                    "Batch40"
+                  ],
+                  [
+                    "Batch41",
+                    "Batch41"
+                  ],
+                  [
+                    "Batch42",
+                    "Batch42"
+                  ],
+                  [
+                    "Batch43",
+                    "Batch43"
+                  ],
+                  [
+                    "Batch44",
+                    "Batch44"
+                  ],
+                  [
+                    "Batch45",
+                    "Batch45"
+                  ],
+                  [
+                    "Batch46",
+                    "Batch46"
+                  ],
+                  [
+                    "Batch47",
+                    "Batch47"
+                  ],
+                  [
+                    "Batch48",
+                    "Batch48"
+                  ],
+                  [
+                    "Batch49",
+                    "Batch49"
+                  ],
+                  [
+                    "Batch50",
+                    "Batch50"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Batch",
+                  "label": "Billing Batch",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "BcdSettingOption",
+                "control_type": "select",
+                "label": "Bill Cycle Day Setting Option",
+                "hint": "Billing cycle day setting option. Set Bill Cycle Day to '0' if Autoset.",
+                "pick_list": [
+                  [
+                    "ManualSet",
+                    "ManualSet"
+                  ],
+                  [
+                    "AutoSet",
+                    "AutoSet"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "BcdSettingOption",
+                  "label": "Bill Cycle Day Setting Option",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "number",
+                "name": "BillCycleDay",
+                "control_type": "number",
+                "label": "Bill Cycle Day",
+                "hint": "Billing cycle day (BCD) on which bill runs generate invoices for the account. Set to '0' if Bill cycle day is set to 'AutoSet'.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "BillToId",
+                "control_type": "text",
+                "label": "Bill To ID",
+                "hint": "ID of the person to bill for the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CommunicationProfileId",
+                "control_type": "text",
+                "label": "CommunicationProfile ID",
+                "hint": "Associates the account with a specified communication profile.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "ConnectExternalUID__c",
+                "control_type": "text",
+                "label": "Connect External UID",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CorporateRegion__h",
+                "control_type": "select",
+                "label": "Corporate Region",
+                "pick_list": [
+                  [
+                    "Global",
+                    "Global"
+                  ],
+                  [
+                    "APJ",
+                    "APJ"
+                  ],
+                  [
+                    "Australia",
+                    "Australia"
+                  ],
+                  [
+                    "China",
+                    "China"
+                  ],
+                  [
+                    "Japan",
+                    "Japan"
+                  ],
+                  [
+                    "New Zealand",
+                    "New Zealand"
+                  ],
+                  [
+                    "EMEA",
+                    "EMEA"
+                  ],
+                  [
+                    "France",
+                    "France"
+                  ],
+                  [
+                    "Germany",
+                    "Germany"
+                  ],
+                  [
+                    "Nordics",
+                    "Nordics"
+                  ],
+                  [
+                    "UK",
+                    "UK"
+                  ],
+                  [
+                    "North America",
+                    "North America"
+                  ],
+                  [
+                    "USA",
+                    "USA"
+                  ],
+                  [
+                    "Central",
+                    "Central"
+                  ],
+                  [
+                    "Northeast",
+                    "Northeast"
+                  ],
+                  [
+                    "Northwest",
+                    "Northwest"
+                  ],
+                  [
+                    "Southeast",
+                    "Southeast"
+                  ],
+                  [
+                    "Southwest",
+                    "Southwest"
+                  ],
+                  [
+                    "Canada",
+                    "Canada"
+                  ],
+                  [
+                    "Mexico",
+                    "Mexico"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "CorporateRegion__h",
+                  "label": "Corporate Region",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "CrmId",
+                "control_type": "text",
+                "label": "CRM Account ID",
+                "hint": "CRM account ID for the account. A CRM is a customer relationship management system, such as Salesforce.com.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Currency",
+                "control_type": "text",
+                "label": "Currency",
+                "hint": "Currency that the customer is billed in.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "CustomerServiceRepName",
+                "control_type": "text",
+                "label": "CSR",
+                "hint": "Name of the account's customer service representative, if applicable.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "DefaultPaymentMethodId",
+                "control_type": "text",
+                "label": "Default Payment Method ID",
+                "hint": "ID of the default payment method for the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Entity__c",
+                "control_type": "select",
+                "label": "Legal Entity",
+                "pick_list": [
+                  [
+                    "North America",
+                    "North America"
+                  ],
+                  [
+                    "EMEA",
+                    "EMEA"
+                  ],
+                  [
+                    "APAC",
+                    "APAC"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Entity__c",
+                  "label": "Legal Entity",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "InCollections__c",
+                "control_type": "select",
+                "label": "In Collections",
+                "pick_list": [
+                  [
+                    "False",
+                    "False"
+                  ],
+                  [
+                    "True",
+                    "True"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "InCollections__c",
+                  "label": "In Collections",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "number",
+                "name": "InvoiceDeliveryPrefsEmail",
+                "control_type": "number",
+                "label": "Invoice Delivery Preferences Email",
+                "hint": "Indicates if the customer wants to receive invoices through email.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "number",
+                "name": "InvoiceDeliveryPrefsPrint",
+                "control_type": "number",
+                "label": "Invoice Delivery Preferences Print",
+                "hint": "Indicates if the customer wants to receive printed invoices, such as through postal mail.",
+                "optional": true,
+                "parse_output": "float_conversion"
+              },
+              {
+                "type": "string",
+                "name": "InvoiceTemplateId",
+                "control_type": "text",
+                "label": "Invoice Template ID",
+                "hint": "The ID of the invoice template.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Name",
+                "control_type": "text",
+                "label": "Name",
+                "hint": "Name of the account as displayed in the Zuora UI.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Notes",
+                "control_type": "text",
+                "label": "Notes",
+                "hint": "Comments about the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "ParentId",
+                "control_type": "text",
+                "label": "Parent ID",
+                "hint": "Identifier of the parent customer account for this Account object.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PaymentGateway",
+                "control_type": "text",
+                "label": "Payment Gateway Name",
+                "hint": "Gateway used for processing electronic payments and refunds.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PaymentTerm",
+                "control_type": "text",
+                "label": "Payment Term",
+                "hint": "Indicates the customer pays for subscriptions.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "PurchaseOrderNumber",
+                "control_type": "text",
+                "label": "PO Number",
+                "hint": "The number of the purchase order associated with this account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SalesRepName",
+                "control_type": "text",
+                "label": "Sales Rep",
+                "hint": "The name of the sales representative associated with this account, if applicable.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SequenceSetId",
+                "control_type": "text",
+                "label": "Sequence Set ID",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "SoldToId",
+                "control_type": "text",
+                "label": "Sold To ID",
+                "hint": "ID of the person who bought the subscription associated with the account.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "Status",
+                "control_type": "select",
+                "label": "Status",
+                "hint": "Allowed values are: <b>Draft</b>, <b>Canceled</b> or <b>Active</b>.",
+                "pick_list": [
+                  [
+                    "Draft",
+                    "Draft"
+                  ],
+                  [
+                    "Active",
+                    "Active"
+                  ],
+                  [
+                    "Canceled",
+                    "Canceled"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "Status",
+                  "label": "Status",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "TaxCompanyCode",
+                "control_type": "text",
+                "label": "Tax Company Code",
+                "hint": "Unique code that identifies a company account in Avalara.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptCertificateID",
+                "control_type": "text",
+                "label": "Tax Exempt Certificate ID",
+                "hint": "ID of your customer's tax exemption certificate.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptCertificateType",
+                "control_type": "text",
+                "label": "Tax Exempt Certificate Type",
+                "hint": "Type of the tax exemption certificate that your customer holds.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptDescription",
+                "control_type": "text",
+                "label": "Tax Exempt Description",
+                "hint": "Description of the tax exemption certificate that your customer holds.",
+                "optional": true
+              },
+              {
+                "type": "date_time",
+                "name": "TaxExemptEffectiveDate",
+                "control_type": "date",
+                "label": "Tax Exempt Effective Date",
+                "hint": "Date the the customer's tax exemption starts.",
+                "optional": true,
+                "render_input": "date_conversion",
+                "parse_output": "date_conversion"
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptEntityUseCode",
+                "control_type": "text",
+                "label": "Tax Exempt Entity/Use Code",
+                "optional": true
+              },
+              {
+                "type": "date_time",
+                "name": "TaxExemptExpirationDate",
+                "control_type": "date",
+                "label": "Tax Exempt Expiration Date",
+                "hint": "Date the customer's tax exemption certificate expires.",
+                "optional": true,
+                "render_input": "date_conversion",
+                "parse_output": "date_conversion"
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptIssuingJurisdiction",
+                "control_type": "text",
+                "label": "Tax Exempt Issuing Jurisdiction",
+                "hint": "Indicates the jurisdiction in which the customer's tax exemption certificate was issued.",
+                "optional": true
+              },
+              {
+                "type": "string",
+                "name": "TaxExemptStatus",
+                "control_type": "select",
+                "label": "Tax Exempt Status",
+                "hint": "Status of the account's tax exemption.",
+                "pick_list": [
+                  [
+                    "No",
+                    "No"
+                  ],
+                  [
+                    "Yes",
+                    "Yes"
+                  ],
+                  [
+                    "PendingVerification",
+                    "PendingVerification"
+                  ]
+                ],
+                "optional": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "TaxExemptStatus",
+                  "label": "Tax Exempt Status",
+                  "toggle_hint": "Use custom value",
+                  "type": "string",
+                  "control_type": "text"
+                }
+              },
+              {
+                "type": "string",
+                "name": "VATId",
+                "control_type": "text",
+                "label": "VAT ID",
+                "hint": "EU Value Added Tax ID.",
+                "optional": true
+              }
+            ],
+            "visible_config_fields": [
+              "object",
+              "ConnectExternalUID__c"
+            ],
+            "uuid": "78d14129-f8f8-4249-a9df-f743002100ce"
+          }
+        ],
+        "uuid": "901e5daf-e233-420e-a3d0-98e6f480a40c"
+      }
+    ],
+    "uuid": "129a9841-8b2b-4bc8-9442-90dc8a90a3db"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "workato_service",
+      "account_id": null,
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "zuora",
+      "account_id": {
+        "zip_name": "Connections/zuora_connector.connection.json",
+        "name": "Zuora Connector",
+        "folder": "Connections"
+      },
+      "skip_validation": false
+    }
+  ]
+}
