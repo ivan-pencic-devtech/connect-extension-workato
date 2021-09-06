@@ -401,9 +401,9 @@
 
       execute: lambda do |connection, input|
         customer_external_uid = if input['customer_external_uid'].blank?
-                                  workato.uuid
-                                else
                                   call(:get_tier_external_uid, connection, input['customer_external_id'])
+                                else
+                                  input['customer_external_uid']
                                 end
 
         asset_external_uid = if input['asset_external_uid'].blank?
@@ -413,9 +413,9 @@
                              end
 
         tier1_external_uid = if input['tier1_external_uid'].blank?
-                               workato.uuid
+                               call(:get_tier_external_uid, connection, input['tier1_external_id'])
                              else
-                               call(:get_tier_external_uid, connection, input['tier1_external_uid'])
+                               input['tier1_external_uid']
                              end
 
         marketplace_id = call(:get_maketplace_id, connection, input['marketplace_name'])
