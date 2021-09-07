@@ -185,6 +185,59 @@
       end
     },
 
+
+    asset_suspend_resume_request: {
+      title: 'Asset Suspend/Resume Request',
+      subtitle: '',
+      description: '',
+      help: "<a href='https://connect.cloudblue.com/community/api/openapi/#operations-Assets-request_list_createRequest' target='_blank'>Official documentation</a>",
+
+      input_fields: lambda do |_object_definitions|
+                      [
+                        {
+                          name: 'external_id',
+                          label: 'External ID',
+                          hint: 'Provide the External ID of the Asset that you want to suspend/resume.',
+                          optional: false
+                        },
+                        {
+                          name: 'external_uid',
+                          label: 'External UID',
+                          hint: 'Provide the External UID of the Asset that you want to suspend/resume.',
+                          optional: true
+                        },
+                        {
+                          name: 'request_type',
+                          label: 'Request type',
+                          control_type: 'select',
+                          pick_list: 'request_type',
+                          hint: 'Pick action type that you would like to preform.',
+                          optional: false
+                        }
+                      ]
+                    end,
+
+      execute: lambda do |_connection, input|
+        params = {
+          "type": input['request_type'],
+          "asset": {
+            "external_id": (input['external_id']).to_s,
+            "external_uid": (input['external_uid']).to_s
+          }
+        }
+
+        post('/public/v1/requests', params)
+          .after_error_response(/.*/) do |_, body, _, message|
+            error("#{message}: #{body}")
+          end
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['fr_response']
+      end
+    },
+    
+    
     asset_purchase_request: {
       title: 'Asset Purchase Request',
       subtitle: '',
@@ -650,10 +703,12 @@
   },
 
   pick_lists: {
-    # Picklists can be referenced by inputs fields or object_definitions
-    # possible arguements - connection
-    # see more at https://docs.workato.com/developing-connectors/sdk/sdk-reference/picklists.html
-
+      request_type: lambda do |connection|
+        [
+          ["Suspend","suspend"],
+          ["Resume","resume"]
+        ]
+      end
   }
 
 }
