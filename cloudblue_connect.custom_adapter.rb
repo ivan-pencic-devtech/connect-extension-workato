@@ -42,6 +42,7 @@
           { name: 'id' },
           { name: 'type' },
           { name: 'error_code' },
+          { name: 'note' },
           { name: 'status' },
           { name: 'params_form_url' },
           { name: 'asset', type: 'object', properties: [
@@ -627,32 +628,24 @@
           {
             name: 'product',
             label: 'Product',
-            control_type: 'select',
-            pick_list: 'products',
             optional: true
           },
           {
             name: 'customer',
             label: 'Customer',
-            control_type: 'select',
-            pick_list: 'customers',
             optional: true
           },
           {
             name: 'request_types',
             label: 'Type(s) of requests',
             hint: "Please specify type(s) of requests to notify about. There should be request types supported by Connect, like 'purchase', 'cancel', 'change', 'suspend', 'resume'. Delimiter is a comma.",
-            type: :string,
-            optional: false,
-            default: 'purchase'
+            optional: false
           },
           {
             name: 'request_status',
             label: 'Status of requests',
-            hint: 'Please specify status which request should have. Trigger will work if request receives this status, or request already in this status is additionally updated.',
-            type: :string,
-            optional: true,
-            default: 'approved'
+            hint: "Please specify status(es) which request should have. There should be status supported by Connect, like 'failed', 'approved', 'inquiring' etc. Delimiter is a comma.",
+            optional: true
           },
           {
             name: 'since',
@@ -662,8 +655,8 @@
           {
             name: 'delay',
             type: :integer,
-            optional: true,
-            default: '0'
+            default: '0',
+            optional: true
           }
         ]
       end,
@@ -675,7 +668,7 @@
         uri = '/public/v1/requests?'
         uri = uri + (!input['product'].blank? ? "eq(asset.product.id,#{input['product']})," : '')
         uri = uri + (!input['customer'].blank? ? "eq(tiers.customer.id,#{input['customer']})," : '')
-        uri = uri + (!input['request_status'].blank? ? "eq(status,#{input['request_status']})," : '')
+        uri = uri + (!input['request_status'].blank? ? "in(status,(#{input['request_status']}))," : '')
         uri = uri + "in(type,(#{input['request_types']})),"
         uri = uri + "ge(updated,#{adjusted_updated_since.iso8601})"
         
