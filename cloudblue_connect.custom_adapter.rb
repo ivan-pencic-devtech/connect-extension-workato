@@ -57,6 +57,253 @@
         ]
       end
     },
+    usage_records: {
+      fields: lambda do 
+[{
+  name: "records",
+  type: "array",
+  properties: [{
+    name: "id"
+  }, {
+    name: "start_date"
+  }, {
+    name: "end_date"
+  }, {
+    name: "product_id"
+  }, {
+    name: "external_billing_id"
+  }, {
+    name: "external_billing_note"
+  }, {
+    name: "item",
+    type: "object",
+    properties: [{
+      name: "id"
+    }, {
+      name: "local_id"
+    }, {
+      name: "mpn"
+    }, {
+      name: "name"
+    }]
+  }, {
+    name: "asset",
+    type: "object",
+    properties: [{
+      name: "id"
+    }, {
+      name: "external_id"
+    }, {
+      name: "external_uid"
+    }]
+  }, {
+    name: "multiplier"
+  }, {
+    name: "usage"
+  }, {
+    name: "status"
+  }, {
+    name: "closed_at"
+  }, {
+    name: "closed_by"
+  }, {
+    name: "params",
+    type: "array",
+    properties: []
+  }, {
+    name: "item_id"
+  }, {
+    name: "asset_id"
+  }, {
+    name: "usagefile",
+    type: "object",
+    properties: [{
+      name: "id"
+    }, {
+      name: "name"
+    }, {
+      name: "schema"
+    }]
+  }, {
+    name: "resource_local_id"
+  }, {
+    name: "asset_external_id"
+  }, {
+    name: "asset_external_uid"
+  }]
+}
+]
+      end
+    },
+    usage_file: {
+      fields: lambda do
+        [{
+       name: "id"
+     },
+     {
+       name: "name"
+     },
+     {
+       name: "status"
+     },
+     {
+       name: "vendor",
+       type: "object",
+       properties: [{
+           name: "id"
+         },
+         {
+           name: "name"
+         }
+       ]
+     },
+     {
+       name: "provider",
+       type: "object",
+       properties: [{
+           name: "id"
+         },
+         {
+           name: "name"
+         }
+       ]
+     },
+     {
+       name: "environment"
+     },
+     {
+       name: "marketplace",
+       type: "object",
+       properties: [{
+           name: "id"
+         },
+         {
+           name: "name"
+         },
+         {
+           name: "icon"
+         }
+       ]
+     },
+     {
+       name: "contract",
+       type: "object",
+       properties: [{
+           name: "id"
+         },
+         {
+           name: "name"
+         }
+       ]
+     },
+     {
+       name: "product",
+       type: "object",
+       properties: [{
+           name: "id"
+         },
+         {
+           name: "name"
+         },
+         {
+           name: "icon"
+         }
+       ]
+     },
+     {
+       name: "acceptance_note"
+     },
+     {
+       name: "schema"
+     },
+     {
+       name: "period",
+       type: "object",
+       properties: [{
+           name: "from"
+         },
+         {
+           name: "to"
+         }
+       ]
+     },
+     {
+       name: "stats",
+       type: "object",
+       properties: [{
+           name: "uploaded"
+         },
+         {
+           name: "validated"
+         },
+         {
+           name: "pending"
+         },
+         {
+           name: "accepted"
+         },
+         {
+           name: "closed"
+         }
+       ]
+     },
+     {
+       name: "events",
+       type: "object",
+       properties: [{
+           name: "created",
+           type: "object",
+           properties: [{
+               name: "at"
+             },
+             {
+               name: "by",
+               type: "object",
+               properties: [{
+                   name: "id"
+                 },
+                 {
+                   name: "name"
+                 }
+               ]
+             }
+           ]
+         },
+         {
+           name: "accepted",
+           type: "object",
+           properties: [{
+               name: "at"
+             },
+             {
+               name: "by",
+               type: "object",
+               properties: [{
+                 name: "name"
+               }]
+             }
+           ]
+         },
+         {
+           name: "closed",
+           type: "object",
+           properties: [{
+               name: "at"
+             },
+             {
+               name: "by",
+               type: "object",
+               properties: [{
+                 name: "name"
+               }]
+             }
+           ]
+         }
+       ]
+     }
+   ]
+      end
+    },
     request: {
       fields: lambda do
         [
@@ -616,7 +863,37 @@
       output_fields: lambda do |object_definitions|
         object_definitions['fr_response']
       end
+    },
+
+
+    get_usage_records: {
+      title: 'Get usage records',
+      subtitle: '',
+      description: '',
+      help: "<a href='https://connect.cloudblue.com/community/modules/usage_module/usage-api/' target='_blank'>Official documentation</a>",
+      input_fields: lambda do |_object_definitions|
+        [
+          {
+            name: 'file_id',
+            label: 'File ID',
+            optional: false,
+            hint: 'Set ID of file to get'
+          }
+        ]
+      end,
+
+      execute: lambda do |_connection, input|
+        {
+          records: get("/public/v1/usage/records?eq(usage_file,#{input['file_id']})")  
+        }
+        
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['usage_records']
+      end
     }
+
 
   },
 
@@ -692,7 +969,70 @@
       output_fields: lambda do |object_definitions|
         object_definitions['request']
       end
+    },
+    
+    
+    new_usage_files: {
+
+      input_fields: lambda do
+        [
+          {
+            name: 'provider_id',
+            label: 'Provider ID',
+            optional: true
+          },
+          {
+            name: 'file_status',
+            label: 'Status of usage file',
+            hint: "Please specify status(es) which usage file should have. There should be status supported by Connect, like 'draft', 'uploading', 'uploaded', 'invalid', 'processing', 'ready', 'rejected', 'pending', 'accepted', 'closed' and 'deleted'. Delimiter is a comma.",
+            optional: true
+          },
+          {
+            name: 'since',
+            type: :timestamp,
+            optional: false
+          },
+          {
+            name: 'delay',
+            type: :integer,
+            default: '0',
+            optional: true
+          }
+        ]
+      end,
+
+      poll: lambda do |_connection, input, last_updated_since|
+        updated_since = (last_updated_since || input['since']).to_time.utc
+        adjusted_updated_since = updated_since + input['delay'].to_i.days
+
+        uri = '/public/v1/usage/files?'
+        uri = uri + (!input['provider_id'].blank? ? "eq(provider.id,#{input['provider_id']})," : '')
+        uri = uri + (!input['file_status'].blank? ? "in(status,(#{input['file_status']}))," : '')
+        uri = uri + "ge(created.at,#{adjusted_updated_since.iso8601})"
+        
+        files = get(uri)
+
+        files.each do |file|
+          updated_since = [updated_since, file['events']['created']['at'].to_time.utc].max
+        end
+
+        {
+          events: files,
+          next_poll: updated_since.iso8601,
+          can_poll_more: false
+        }
+      end,
+
+      dedup: lambda do |files|
+        files['id']
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['usage_file']
+      end
     }
+    
+    
   },
 
   pick_lists: {
