@@ -42,6 +42,7 @@
           { name: 'id' },
           { name: 'type' },
           { name: 'error_code' },
+          { name: 'note' },
           { name: 'status' },
           { name: 'params_form_url' },
           { name: 'asset', type: 'object', properties: [
@@ -56,6 +57,239 @@
         ]
       end
     },
+    usage_records: {
+      fields: lambda do
+        [{
+          name: "records",
+          type: "array",
+          properties: [{
+            name: "id"
+          }, {
+            name: "start_date"
+          }, {
+            name: "end_date"
+          }, {
+            name: "product_id"
+          }, {
+            name: "external_billing_id"
+          }, {
+            name: "external_billing_note"
+          }, {
+            name: "item",
+            type: "object",
+            properties: [{
+              name: "id"
+            }, {
+              name: "local_id"
+            }, {
+              name: "mpn"
+            }, {
+              name: "name"
+            }]
+          }, {
+            name: "asset",
+            type: "object",
+            properties: [{
+              name: "id"
+            }, {
+              name: "external_id"
+            }, {
+              name: "external_uid"
+            }]
+          }, {
+            name: "multiplier"
+          }, {
+            name: "usage"
+          }, {
+            name: "status"
+          }, {
+            name: "closed_at"
+          }, {
+            name: "closed_by"
+          }, {
+            name: "params",
+            type: "array",
+            properties: []
+          }, {
+            name: "item_id"
+          }, {
+            name: "asset_id"
+          }, {
+            name: "usagefile",
+            type: "object",
+            properties: [{
+              name: "id"
+            }, {
+              name: "name"
+            }, {
+              name: "schema"
+            }]
+          }, {
+            name: "resource_local_id"
+          }, {
+            name: "asset_external_id"
+          }, {
+            name: "asset_external_uid"
+          }]
+        }]
+      end
+    },
+    usage_file: {
+      fields: lambda do
+        [{
+          name: "id"
+        },
+         {
+           name: "name"
+         },
+         {
+           name: "status"
+         },
+         {
+           name: "vendor",
+           type: "object",
+           properties: [{
+             name: "id"
+           },
+                        {
+                          name: "name"
+                        }]
+         },
+         {
+           name: "provider",
+           type: "object",
+           properties: [{
+             name: "id"
+           },
+                        {
+                          name: "name"
+                        }]
+         },
+         {
+           name: "environment"
+         },
+         {
+           name: "marketplace",
+           type: "object",
+           properties: [{
+             name: "id"
+           },
+                        {
+                          name: "name"
+                        },
+                        {
+                          name: "icon"
+                        }]
+         },
+         {
+           name: "contract",
+           type: "object",
+           properties: [{
+             name: "id"
+           },
+                        {
+                          name: "name"
+                        }]
+         },
+         {
+           name: "product",
+           type: "object",
+           properties: [{
+             name: "id"
+           },
+                        {
+                          name: "name"
+                        },
+                        {
+                          name: "icon"
+                        }]
+         },
+         {
+           name: "acceptance_note"
+         },
+         {
+           name: "schema"
+         },
+         {
+           name: "period",
+           type: "object",
+           properties: [{
+             name: "from"
+           },
+                        {
+                          name: "to"
+                        }]
+         },
+         {
+           name: "stats",
+           type: "object",
+           properties: [{
+             name: "uploaded"
+           },
+                        {
+                          name: "validated"
+                        },
+                        {
+                          name: "pending"
+                        },
+                        {
+                          name: "accepted"
+                        },
+                        {
+                          name: "closed"
+                        }]
+         },
+         {
+           name: "events",
+           type: "object",
+           properties: [{
+             name: "created",
+             type: "object",
+             properties: [{
+               name: "at"
+             },
+                          {
+                            name: "by",
+                            type: "object",
+                            properties: [{
+                              name: "id"
+                            },
+                                         {
+                                           name: "name"
+                                         }]
+                          }]
+           },
+                        {
+                          name: "accepted",
+                          type: "object",
+                          properties: [{
+                            name: "at"
+                          },
+                                       {
+                                         name: "by",
+                                         type: "object",
+                                         properties: [{
+                                           name: "name"
+                                         }]
+                                       }]
+                        },
+                        {
+                          name: "closed",
+                          type: "object",
+                          properties: [{
+                            name: "at"
+                          },
+                                       {
+                                         name: "by",
+                                         type: "object",
+                                         properties: [{
+                                           name: "name"
+                                         }]
+                                       }]
+                        }]
+         }]
+      end
+    },
     request: {
       fields: lambda do
         [
@@ -63,9 +297,10 @@
           { name: 'type' },
           { name: 'note' },
           { name: 'reason' },
+          { name: 'effective_date' },
           { name: 'created' },
           { name: 'updated' },
-          { name: 'answered''note' },
+          { name: 'answered' },
           { name: 'reason' },
           { name: 'assignee' },
           { name: 'activation_key' },
@@ -124,19 +359,19 @@
                          marketplace_id
                        end,
     get_tier_external_uid: lambda do |_connection, tier_external_id|
-                                 response = get("/public/v1/tier/accounts?external_id=#{tier_external_id}")
-                                            .after_error_response(/.*/) do |_, body, _, message|
-                                   error("#{message}: #{body}")
-                                 end
+                             response = get("/public/v1/tier/accounts?external_id=#{tier_external_id}")
+                                        .after_error_response(/.*/) do |_, body, _, message|
+                               error("#{message}: #{body}")
+                             end
 
-                                 tier_external_uid = if response.empty?
-                                                           workato.uuid
-                                                         else
-                                                           response[0]['external_uid']
-                                                         end
+                             tier_external_uid = if response.empty?
+                                                   workato.uuid
+                                                 else
+                                                   response[0]['external_uid']
+                                                 end
 
-                                 tier_external_uid
-                               end
+                             tier_external_uid
+                           end
   },
 
   actions: {
@@ -168,6 +403,57 @@
       execute: lambda do |_connection, input|
         params = {
           "type": 'cancel',
+          "asset": {
+            "external_id": (input['external_id']).to_s,
+            "external_uid": (input['external_uid']).to_s
+          }
+        }
+
+        post('/public/v1/requests', params)
+          .after_error_response(/.*/) do |_, body, _, message|
+            error("#{message}: #{body}")
+          end
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['fr_response']
+      end
+    },
+
+    asset_suspend_resume_request: {
+      title: 'Asset Suspend/Resume Request',
+      subtitle: '',
+      description: '',
+      help: "<a href='https://connect.cloudblue.com/community/api/openapi/#operations-Assets-request_list_createRequest' target='_blank'>Official documentation</a>",
+
+      input_fields: lambda do |_object_definitions|
+                      [
+                        {
+                          name: 'external_id',
+                          label: 'External ID',
+                          hint: 'Provide the External ID of the Asset that you want to suspend/resume.',
+                          optional: false
+                        },
+                        {
+                          name: 'external_uid',
+                          label: 'External UID',
+                          hint: 'Provide the External UID of the Asset that you want to suspend/resume.',
+                          optional: true
+                        },
+                        {
+                          name: 'request_type',
+                          label: 'Request type',
+                          control_type: 'select',
+                          pick_list: 'request_type',
+                          hint: 'Pick action type that you would like to preform.',
+                          optional: false
+                        }
+                      ]
+                    end,
+
+      execute: lambda do |_connection, input|
+        params = {
+          "type": input['request_type'],
           "asset": {
             "external_id": (input['external_id']).to_s,
             "external_uid": (input['external_uid']).to_s
@@ -562,6 +848,33 @@
       output_fields: lambda do |object_definitions|
         object_definitions['fr_response']
       end
+    },
+
+    get_usage_records: {
+      title: 'Get usage records',
+      subtitle: '',
+      description: '',
+      help: "<a href='https://connect.cloudblue.com/community/modules/usage_module/usage-api/' target='_blank'>Official documentation</a>",
+      input_fields: lambda do |_object_definitions|
+        [
+          {
+            name: 'file_id',
+            label: 'File ID',
+            optional: false,
+            hint: 'Set ID of file to get'
+          }
+        ]
+      end,
+
+      execute: lambda do |_connection, input|
+        {
+          records: get("/public/v1/usage/records?eq(usage_file,#{input['file_id']})")
+        }
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['usage_records']
+      end
     }
 
   },
@@ -574,32 +887,24 @@
           {
             name: 'product',
             label: 'Product',
-            control_type: 'select',
-            pick_list: 'products',
             optional: true
           },
           {
             name: 'customer',
             label: 'Customer',
-            control_type: 'select',
-            pick_list: 'customers',
             optional: true
           },
           {
             name: 'request_types',
             label: 'Type(s) of requests',
             hint: "Please specify type(s) of requests to notify about. There should be request types supported by Connect, like 'purchase', 'cancel', 'change', 'suspend', 'resume'. Delimiter is a comma.",
-            type: :string,
-            optional: false,
-            default: 'purchase'
+            optional: false
           },
           {
             name: 'request_status',
             label: 'Status of requests',
-            hint: 'Please specify status which request should have. Trigger will work if request receives this status, or request already in this status is additionally updated.',
-            type: :string,
-            optional: true,
-            default: 'approved'
+            hint: "Please specify status(es) which request should have. There should be status supported by Connect, like 'failed', 'approved', 'inquiring' etc. Delimiter is a comma.",
+            optional: true
           },
           {
             name: 'since',
@@ -609,8 +914,8 @@
           {
             name: 'delay',
             type: :integer,
-            optional: true,
-            default: '0'
+            default: '0',
+            optional: true
           }
         ]
       end,
@@ -622,10 +927,10 @@
         uri = '/public/v1/requests?'
         uri = uri + (!input['product'].blank? ? "eq(asset.product.id,#{input['product']})," : '')
         uri = uri + (!input['customer'].blank? ? "eq(tiers.customer.id,#{input['customer']})," : '')
-        uri = uri + (!input['request_status'].blank? ? "eq(status,#{input['request_status']})," : '')
+        uri = uri + (!input['request_status'].blank? ? "in(status,(#{input['request_status']}))," : '')
         uri = uri + "in(type,(#{input['request_types']})),"
         uri = uri + "ge(updated,#{adjusted_updated_since.iso8601})"
-        
+
         requests = get(uri)
 
         requests.each do |request|
@@ -646,14 +951,77 @@
       output_fields: lambda do |object_definitions|
         object_definitions['request']
       end
+    },
+
+    new_usage_files: {
+
+      input_fields: lambda do
+        [
+          {
+            name: 'provider_id',
+            label: 'Provider ID',
+            optional: true
+          },
+          {
+            name: 'file_status',
+            label: 'Status of usage file',
+            hint: "Please specify status(es) which usage file should have. There should be status supported by Connect, like 'draft', 'uploading', 'uploaded', 'invalid', 'processing', 'ready', 'rejected', 'pending', 'accepted', 'closed' and 'deleted'. Delimiter is a comma.",
+            optional: true
+          },
+          {
+            name: 'since',
+            type: :timestamp,
+            optional: false
+          },
+          {
+            name: 'delay',
+            type: :integer,
+            default: '0',
+            optional: true
+          }
+        ]
+      end,
+
+      poll: lambda do |_connection, input, last_updated_since|
+        updated_since = (last_updated_since || input['since']).to_time.utc
+        adjusted_updated_since = updated_since + input['delay'].to_i.days
+
+        uri = '/public/v1/usage/files?'
+        uri = uri + (!input['provider_id'].blank? ? "eq(provider.id,#{input['provider_id']})," : '')
+        uri = uri + (!input['file_status'].blank? ? "in(status,(#{input['file_status']}))," : '')
+        uri = uri + "ge(created.at,#{adjusted_updated_since.iso8601})"
+
+        files = get(uri)
+
+        files.each do |file|
+          updated_since = [updated_since, file['events']['created']['at'].to_time.utc].max
+        end
+
+        {
+          events: files,
+          next_poll: updated_since.iso8601,
+          can_poll_more: false
+        }
+      end,
+
+      dedup: lambda do |files|
+        files['id']
+      end,
+
+      output_fields: lambda do |object_definitions|
+        object_definitions['usage_file']
+      end
     }
+
   },
 
   pick_lists: {
-    # Picklists can be referenced by inputs fields or object_definitions
-    # possible arguements - connection
-    # see more at https://docs.workato.com/developing-connectors/sdk/sdk-reference/picklists.html
-
+    request_type: lambda do |connection|
+      [
+        ["Suspend", "suspend"],
+        ["Resume", "resume"]
+      ]
+    end
   }
 
 }
