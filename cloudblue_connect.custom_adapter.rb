@@ -945,7 +945,7 @@
       end,
 
       dedup: lambda do |request|
-        request['id']
+        request['id'] + request['status']
       end,
 
       output_fields: lambda do |object_definitions|
@@ -1005,7 +1005,7 @@
       end,
 
       dedup: lambda do |files|
-        files['id']
+        files['id'] + files['status']
       end,
 
       output_fields: lambda do |object_definitions|
