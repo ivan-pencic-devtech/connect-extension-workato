@@ -886,7 +886,7 @@
                     label: 'Events Created At Period From',
                     hint: 'Events Created At Period From',
                     optional: false
-                  },
+                  }
 
                 ]
               end
@@ -7822,7 +7822,10 @@
 
       input_fields: lambda do |object_definitions|
                       object_definitions['optional_inputs'].only('id') +
-                        object_definitions['billing_request_inputs'].only('external_id', 'external_uid')
+                        object_definitions['billing_request_inputs'].only(
+                          'external_id',
+                          'external_uid'
+                        )
                     end,
 
       execute: lambda do |_connection, input|
@@ -7906,8 +7909,11 @@
       help: "<a href='https://connect.cloudblue.com/community/modules/subscriptions/fulfillment-requests/#Suspend target='_blank'>Official documentation</a>",
 
       input_fields: lambda do |object_definitions|
-                      object_definitions['billing_request_inputs'].only('external_id', 'external_uid') +
-                      object_definitions['required_inputs'].only('sr_request_type')
+                      object_definitions['billing_request_inputs'].only(
+                        'external_id',
+                        'external_uid'
+                      ) +
+                        object_definitions['required_inputs'].only('sr_request_type')
                     end,
 
       execute: lambda do |_connection, input|
@@ -9579,7 +9585,7 @@
       poll: lambda do |_connection, input, closure|
               closure = {} unless closure.present?
               updated_since = (closure['cursor'] || input['updated_period_from'])
-              
+
               input['updated_period_from'] = updated_since
 
               uri = '/public/v1/requests'
@@ -9637,9 +9643,8 @@
                 requests = all_items
               end
 
-        
               closure['cursor'] = all_items.last['updated'] unless all_items.blank?
-              
+
               {
                 events: requests,
                 next_poll: closure,
@@ -9668,11 +9673,11 @@
 
       input_fields: lambda do |object_definitions|
         object_definitions['required_inputs'].only('events.created.at_period_from') +
-        object_definitions['asset_inputs'].only('asset_type') +
-        object_definitions['optional_inputs'].only(
-          'limit', 'offset', 'events.created.at_period_to',
-          'events.updated.at_period_from', 'events.updated.at_period_to', 'id'
-        ) +
+          object_definitions['asset_inputs'].only('asset_type') +
+          object_definitions['optional_inputs'].only(
+            'limit', 'offset', 'events.created.at_period_to',
+            'events.updated.at_period_from', 'events.updated.at_period_to', 'id'
+          ) +
           object_definitions['asset_search_inputs'].only(
             'connection.hub.id', 'connection.hub.name', 'connection.id', 'connection.provider.id',
             'connection.provider.name',
@@ -9685,7 +9690,7 @@
       poll: lambda do |_connection, input, closure|
         closure = {} unless closure.present?
         updated_since = (closure['cursor'] || input['events.created.at_period_from'])
-        
+
         input['events.created.at_period_from'] = updated_since
 
         uri = '/public/v1/subscriptions/assets'
@@ -9742,7 +9747,7 @@
         end
 
         closure['cursor'] = all_items.last['updated'] unless all_items.blank?
-              
+
         {
           events: requests,
           next_poll: closure,
@@ -9824,7 +9829,7 @@
       poll: lambda do |_connection, input, closure|
         closure = {} unless closure.present?
         updated_since = (closure['cursor'] || input['created_period_from'])
-        
+
         input['created_period_from'] = updated_since
 
         uri = "/public/v1/conversations/#{input['conversation_id']}/messages"
@@ -9845,8 +9850,8 @@
 
         conversations = get(uri)
 
-      closure['cursor'] = conversations.last['created'] unless conversations.blank?
-          
+        closure['cursor'] = conversations.last['created'] unless conversations.blank?
+
         {
           events: conversations,
           next_poll: closure,
